@@ -366,6 +366,9 @@ var hvStat = {
 	get roundInfo() {
 		return hvStat.storage.roundInfo.value;
 	},
+	get fullBattleInfo() {
+		return hvStat.storage.fullBattleInfo.value;
+	},
 	get equipmentTags() {
 		return hvStat.storage.equipmentTags.value;
 	},
@@ -681,6 +684,11 @@ hvStat.storage.initialValue = {
 		isShowEndProfsMagic: true,
 		isShowEndProfsArmor: true,
 		isShowEndProfsWeapon: true,
+		isShowCumEndStats: true,
+		isShowCumEndProfs: true,
+		isShowCumEndProfsMagic: true,
+		isShowCumEndProfsArmor: true,
+		isShowCumEndProfsWeapon: true,
 		autoAdvanceBattleRound: false,
 		autoAdvanceBattleRoundDelay: 500,
 
@@ -1003,6 +1011,40 @@ hvStat.storage.initialValue = {
 		weaponprocs: [0, 0, 0, 0, 0, 0, 0, 0],	// stats
 		pskills: [0, 0, 0, 0, 0, 0, 0],	// stats
 	},
+	// Full Battle Information object
+	fullBattleInfo: {
+		aAttempts: 0,	// stats
+		aHits: [0, 0],	// stats
+		aOffhands: [0, 0, 0, 0],	// stats
+		dominoHits: 0,	// stats
+		dDealt: [0, 0, 0],	// stats
+		sHits: [0, 0],	// stats
+		sResists: 0,	// stats
+		dDealtSp: [0, 0],	// stats
+		mAttempts: 0,	// stats
+		mHits: [0, 0],	// stats
+		pDodges: 0,	// stats
+		pEvades: 0,	// stats
+		pParries: 0,	// stats
+		pBlocks: 0,	// stats
+		pResists: 0,	// stats
+		dTaken: [0, 0],	// stats
+		coalesce: 0,	// stats
+		overStrikes: 0,	// stats
+		elemCasts: 0,	// stats
+		divineCasts: 0,	// stats
+		forbidCasts: 0,	// stats
+		depCasts: 0,	// stats
+		supportSpells: 0,	// stats
+		curativeSpells: 0,	// stats
+		elemGain: 0,	// stats
+		divineGain: 0,	// stats
+		forbidGain: 0,	// stats
+		depGain: 0,	// stats
+		supportGain: 0,	// stats
+		weapProfGain: [0, 0, 0, 0],	// stats
+		armorProfGain: [0, 0, 0],	// stats
+	},
 	// Equipment Tags object
 	equipmentTags: {
 		OneHandedIDs: [],
@@ -1187,6 +1229,9 @@ hvStat.storage.shrine = new hvStat.storage.Shrine("HVShrine", hvStat.storage.ini
 
 // Round Information object
 hvStat.storage.roundInfo = new hvStat.storage.Item("hvStat.roundInfo", hvStat.storage.initialValue.roundInfo);
+
+// Full Battle Information object
+hvStat.storage.fullBattleInfo = new hvStat.storage.Item("hvStat.fullBattleInfo", hvStat.storage.initialValue.fullBattleInfo);
 
 // Equipment Tags object
 hvStat.storage.equipmentTags = new hvStat.storage.Item("HVTags", hvStat.storage.initialValue.equipmentTags);
@@ -4133,6 +4178,11 @@ function showBattleEndStats() {
 	battleLog.innerHTML = "<div class='ui-state-default ui-corner-bottom' style='padding:10px;margin-bottom:10px;text-align:left'>" + getBattleEndStatsHtml() + "</div>" + battleLog.innerHTML;
 }
 
+function showFullBattleEndStats() {
+	var battleLog = document.getElementById("togpane_log");
+	battleLog.innerHTML = "<div class='ui-state-default ui-corner-bottom' style='padding:10px;margin-bottom:10px;text-align:left'>" + getFullBattleEndStatsHtml() + "</div>" + battleLog.innerHTML;
+}
+
 HVStat.warnHealthStatus = function () {
 	var hpAlertAlreadyShown = !!localStorage.getItem(HVStat.key_hpAlertAlreadyShown);
 	var mpAlertAlreadyShown = !!localStorage.getItem(HVStat.key_mpAlertAlreadyShown);
@@ -4379,7 +4429,7 @@ function collectRoundInfo() {
 				})();
 			}
 		}
-		if (hvStat.settings.isTrackStats || hvStat.settings.isShowEndStats) {
+		if (hvStat.settings.isTrackStats || hvStat.settings.isShowEndStats || hvStat.settings.isShowCumEndStats) {
 			var o = 0;
 			if (logHTML.match(/\s(\d+)\s/)) {
 				o = parseInt(RegExp.$1);
@@ -4847,11 +4897,60 @@ function saveStats() {
 		hvStat.stats.pskills[6] += hvStat.roundInfo.pskills[6];
 		if (hvStat.stats.datestart === 0) hvStat.stats.datestart = (new Date()).getTime();
 	}
+	if (hvStat.settings.isShowCumEndStats) {
+		hvStat.fullBattleInfo.aAttempts += hvStat.roundInfo.aAttempts;
+		hvStat.fullBattleInfo.aHits[0] += hvStat.roundInfo.aHits[0];
+		hvStat.fullBattleInfo.aHits[1] += hvStat.roundInfo.aHits[1];
+		hvStat.fullBattleInfo.aOffhands[0] += hvStat.roundInfo.aOffhands[0];
+		hvStat.fullBattleInfo.aOffhands[1] += hvStat.roundInfo.aOffhands[1];
+		hvStat.fullBattleInfo.aOffhands[2] += hvStat.roundInfo.aOffhands[2];
+		hvStat.fullBattleInfo.aOffhands[3] += hvStat.roundInfo.aOffhands[3];
+		hvStat.fullBattleInfo.sHits[0] += hvStat.roundInfo.sHits[0];
+		hvStat.fullBattleInfo.sHits[1] += hvStat.roundInfo.sHits[1];
+		hvStat.fullBattleInfo.mAttempts += hvStat.roundInfo.mAttempts;
+		hvStat.fullBattleInfo.mHits[0] += hvStat.roundInfo.mHits[0];
+		hvStat.fullBattleInfo.mHits[1] += hvStat.roundInfo.mHits[1];
+		hvStat.fullBattleInfo.pDodges += hvStat.roundInfo.pDodges;
+		hvStat.fullBattleInfo.pEvades += hvStat.roundInfo.pEvades;
+		hvStat.fullBattleInfo.pParries += hvStat.roundInfo.pParries;
+		hvStat.fullBattleInfo.pBlocks += hvStat.roundInfo.pBlocks;
+		hvStat.fullBattleInfo.dDealt[0] += hvStat.roundInfo.dDealt[0];
+		hvStat.fullBattleInfo.dDealt[1] += hvStat.roundInfo.dDealt[1];
+		hvStat.fullBattleInfo.dDealt[2] += hvStat.roundInfo.dDealt[2];
+		hvStat.fullBattleInfo.dTaken[0] += hvStat.roundInfo.dTaken[0];
+		hvStat.fullBattleInfo.dTaken[1] += hvStat.roundInfo.dTaken[1];
+		hvStat.fullBattleInfo.dDealtSp[0] += hvStat.roundInfo.dDealtSp[0];
+		hvStat.fullBattleInfo.dDealtSp[1] += hvStat.roundInfo.dDealtSp[1];
+		hvStat.fullBattleInfo.coalesce += hvStat.roundInfo.coalesce;
+		hvStat.fullBattleInfo.dominoHits += hvStat.roundInfo.aDomino[0];
+		hvStat.fullBattleInfo.overStrikes += hvStat.roundInfo.overStrikes;
+		hvStat.fullBattleInfo.pResists += hvStat.roundInfo.pResists;
+		hvStat.fullBattleInfo.sResists += hvStat.roundInfo.sResists;
+		hvStat.fullBattleInfo.elemCasts += hvStat.roundInfo.elemSpells[1];
+		hvStat.fullBattleInfo.divineCasts += hvStat.roundInfo.divineSpells[1];
+		hvStat.fullBattleInfo.forbidCasts += hvStat.roundInfo.forbidSpells[1];
+		hvStat.fullBattleInfo.depCasts += hvStat.roundInfo.depSpells[1];
+		hvStat.fullBattleInfo.supportSpells += hvStat.roundInfo.supportSpells;
+		hvStat.fullBattleInfo.curativeSpells += hvStat.roundInfo.curativeSpells;
+		hvStat.fullBattleInfo.elemGain += hvStat.roundInfo.elemGain;
+		hvStat.fullBattleInfo.divineGain += hvStat.roundInfo.divineGain;
+		hvStat.fullBattleInfo.forbidGain += hvStat.roundInfo.forbidGain;
+		hvStat.fullBattleInfo.depGain += hvStat.roundInfo.depGain;
+		hvStat.fullBattleInfo.supportGain += hvStat.roundInfo.supportGain;
+		hvStat.fullBattleInfo.weapProfGain[0] += hvStat.roundInfo.weapProfGain[0];
+		hvStat.fullBattleInfo.weapProfGain[1] += hvStat.roundInfo.weapProfGain[1];
+		hvStat.fullBattleInfo.weapProfGain[2] += hvStat.roundInfo.weapProfGain[2];
+		hvStat.fullBattleInfo.weapProfGain[3] += hvStat.roundInfo.weapProfGain[3];
+		hvStat.fullBattleInfo.armorProfGain[0] += hvStat.roundInfo.armorProfGain[0];
+		hvStat.fullBattleInfo.armorProfGain[1] += hvStat.roundInfo.armorProfGain[1];
+		hvStat.fullBattleInfo.armorProfGain[2] += hvStat.roundInfo.armorProfGain[2];
+	}
 	hvStat.arenaRewards.tokenDrops[0] += _tokenDrops[0];
 	hvStat.arenaRewards.tokenDrops[1] += _tokenDrops[1];
 	hvStat.arenaRewards.tokenDrops[2] += _tokenDrops[2];
 	hvStat.storage.overview.save();
 	hvStat.storage.stats.save();
+	hvStat.storage.fullBattleInfo.save();
 	hvStat.storage.arenaRewards.save();
 	hvStat.storage.drops.save();
 }
@@ -4888,8 +4987,8 @@ function getBattleEndStatsHtml() {
 		+ "<b>Crits taken</b>: " + formatProbability(hvStat.roundInfo.mHits[1], b, 2) + ", "
 		+ "<b>Total dmg taken</b>: " + (hvStat.roundInfo.dTaken[0] + hvStat.roundInfo.dTaken[1]) + ", "
 		+ "<b>Avg dmg taken</b>: " + hvStat.util.ratio(hvStat.roundInfo.dTaken[0] + hvStat.roundInfo.dTaken[1], b).toFixed(2);
-	if (hvStat.settings.isShowEndProfs && (hvStat.settings.isShowEndProfsMagic || hvStat.settings.isShowEndProfsArmor || hvStat.settings.isShowEndProfsWeapon)) { //isShowEndProfs added by Ilirith
-		if (hvStat.settings.isShowEndProfsMagic) {
+	if (hvStat.settings.isShowCumEndProfs && (hvStat.settings.isShowCumEndProfsMagic || hvStat.settings.isShowCumEndProfsArmor || hvStat.settings.isShowCumEndProfsWeapon)) {
+		if (hvStat.settings.isShowCumEndProfsMagic) {
 			a += "<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
 				+ "<b>Curative Spells</b>: " + hvStat.roundInfo.curativeSpells
 				+ ", <b>Support Spells</b>: " + hvStat.roundInfo.supportSpells
@@ -4904,18 +5003,84 @@ function getBattleEndStatsHtml() {
 				+ ", <b>Forbidden Gain</b>: " + hvStat.roundInfo.forbidGain.toFixed(2)
 				+ ", <b>Elemental Gain</b>: " + hvStat.roundInfo.elemGain.toFixed(2);
 		}
-		if (hvStat.settings.isShowEndProfsArmor) {
+		if (hvStat.settings.isShowCumEndProfsArmor) {
 			a += "<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
 				+ "<b>Cloth Gain</b>: " + hvStat.roundInfo.armorProfGain[0].toFixed(2)
 				+ ", <b>Light Armor Gain</b>: " + hvStat.roundInfo.armorProfGain[1].toFixed(2)
 				+ ", <b>Heavy Armor Gain</b>: " + hvStat.roundInfo.armorProfGain[2].toFixed(2);
 		}
-		if (hvStat.settings.isShowEndProfsWeapon) {
+		if (hvStat.settings.isShowCumEndProfsWeapon) {
 			a += "<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
 				+ "<b>One-Handed Gain</b>: " + hvStat.roundInfo.weapProfGain[0].toFixed(2)
 				+ ", <b>Two-Handed Gain</b>: " + hvStat.roundInfo.weapProfGain[1].toFixed(2)
 				+ ", <b>Dual Wielding Gain</b>: " + hvStat.roundInfo.weapProfGain[2].toFixed(2)
 				+ ", <b>Staff Gain</b>: " + hvStat.roundInfo.weapProfGain[3].toFixed(2);
+		}
+	}
+	return a;
+}
+
+function getFullBattleEndStatsHtml() {
+	function formatProbability(numerator, denominator, digits) {
+		return String(numerator) + "/" + String(denominator)
+			+ " (" + String(hvStat.util.percentRatio(numerator, denominator, digits)) + "%)";
+	}
+
+	var f = hvStat.fullBattleInfo.sHits[0] + hvStat.fullBattleInfo.sHits[1] + hvStat.fullBattleInfo.depCasts + hvStat.fullBattleInfo.sResists;
+	var e = hvStat.fullBattleInfo.sHits[0] + hvStat.fullBattleInfo.sHits[1] + hvStat.fullBattleInfo.depCasts;
+	var d = hvStat.fullBattleInfo.aHits[0] + hvStat.fullBattleInfo.aHits[1];
+	var c = hvStat.fullBattleInfo.sHits[0] + hvStat.fullBattleInfo.sHits[1];
+	var b = hvStat.fullBattleInfo.mHits[0] + hvStat.fullBattleInfo.mHits[1];
+	var ab = hvStat.fullBattleInfo.aOffhands[0] + hvStat.fullBattleInfo.aOffhands[2];
+	var a = "<b>Accuracy</b>: " + formatProbability(d, hvStat.fullBattleInfo.aAttempts, 2) + ", "
+		+ "<b>Crits</b>: " + formatProbability(hvStat.fullBattleInfo.aHits[1], d, 2) + ", "
+		+ "<b>Offhand</b>: " + formatProbability(ab, d, 2) + ", "
+		+ "<b>Domino</b>: " + formatProbability(hvStat.fullBattleInfo.dominoHits, d, 2) + ", "
+		+ "<b>OverStrikes</b>: " + formatProbability(hvStat.fullBattleInfo.overStrikes, d, 2) + ", "
+		+ "<b>Coalesce</b>: " + formatProbability(hvStat.fullBattleInfo.coalesce, e, 2) + ", "
+		+ "<b>M. Accuracy</b>: " + formatProbability(e, f, 2) + ", "
+		+ "<b>Spell Crits</b>: " + formatProbability(hvStat.fullBattleInfo.sHits[1], c, 2) + ", "
+		+ "<b>Avg hit dmg</b>: " + hvStat.util.ratio(hvStat.fullBattleInfo.dDealt[0], hvStat.fullBattleInfo.aHits[0]).toFixed(2) + "|" + hvStat.util.ratio(hvStat.fullBattleInfo.dDealtSp[0], hvStat.fullBattleInfo.sHits[0]).toFixed(2) + ", "
+		+ "<b>Avg crit dmg</b>: " + hvStat.util.ratio(hvStat.fullBattleInfo.dDealt[1], hvStat.fullBattleInfo.aHits[1]).toFixed(2) + "|" + hvStat.util.ratio(hvStat.fullBattleInfo.dDealtSp[1], hvStat.fullBattleInfo.sHits[1]).toFixed(2) + ", "
+		+ "<b>Avg dmg</b>: " + hvStat.util.ratio(hvStat.fullBattleInfo.dDealt[0] + hvStat.fullBattleInfo.dDealt[1], d).toFixed(2) + "|" + hvStat.util.ratio(hvStat.fullBattleInfo.dDealtSp[0] + hvStat.fullBattleInfo.dDealtSp[1], c).toFixed(2)
+		+ "<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
+		+ "<b>Hits taken</b>: " + formatProbability(b, hvStat.fullBattleInfo.mAttempts, 2) + ", "
+		+ "<b>Missed</b>: " + formatProbability(hvStat.fullBattleInfo.pDodges, hvStat.fullBattleInfo.mAttempts, 2) + ", "
+		+ "<b>Evaded</b>: " + formatProbability(hvStat.fullBattleInfo.pEvades, hvStat.fullBattleInfo.mAttempts, 2) + ", "
+		+ "<b>Blocked</b>: " + formatProbability(hvStat.fullBattleInfo.pBlocks, hvStat.fullBattleInfo.mAttempts, 2) + ", "
+		+ "<b>Parried</b>: " + formatProbability(hvStat.fullBattleInfo.pParries, hvStat.fullBattleInfo.mAttempts, 2) + ", "
+		+ "<b>Resisted</b>: " + formatProbability(hvStat.fullBattleInfo.pResists, hvStat.fullBattleInfo.mAttempts, 2) + ", "
+		+ "<b>Crits taken</b>: " + formatProbability(hvStat.fullBattleInfo.mHits[1], b, 2) + ", "
+		+ "<b>Total dmg taken</b>: " + (hvStat.fullBattleInfo.dTaken[0] + hvStat.fullBattleInfo.dTaken[1]) + ", "
+		+ "<b>Avg dmg taken</b>: " + hvStat.util.ratio(hvStat.fullBattleInfo.dTaken[0] + hvStat.fullBattleInfo.dTaken[1], b).toFixed(2);
+	if (hvStat.settings.isShowEndProfs && (hvStat.settings.isShowEndProfsMagic || hvStat.settings.isShowEndProfsArmor || hvStat.settings.isShowEndProfsWeapon)) { //isShowEndProfs added by Ilirith
+		if (hvStat.settings.isShowEndProfsMagic) {
+			a += "<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
+				+ "<b>Curative Spells</b>: " + hvStat.fullBattleInfo.curativeSpells
+				+ ", <b>Support Spells</b>: " + hvStat.fullBattleInfo.supportSpells
+				+ ", <b>Deprecating Spells</b>: " + hvStat.fullBattleInfo.depCasts
+				+ ", <b>Divine Spells</b>: " + hvStat.fullBattleInfo.divineCasts
+				+ ", <b>Forbidden Spells</b>: " + hvStat.fullBattleInfo.forbidCasts
+				+ ", <b>Elemental Spells</b>: " + hvStat.fullBattleInfo.elemCasts
+				+ "<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
+				+ "<b>SupportGain</b>: " + hvStat.fullBattleInfo.supportGain.toFixed(2)
+				+ ", <b>Deprecating Gain</b>: " + hvStat.fullBattleInfo.depGain.toFixed(2)
+				+ ", <b>Divine Gain</b>: " + hvStat.fullBattleInfo.divineGain.toFixed(2)
+				+ ", <b>Forbidden Gain</b>: " + hvStat.fullBattleInfo.forbidGain.toFixed(2)
+				+ ", <b>Elemental Gain</b>: " + hvStat.fullBattleInfo.elemGain.toFixed(2);
+		}
+		if (hvStat.settings.isShowEndProfsArmor) {
+			a += "<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
+				+ "<b>Cloth Gain</b>: " + hvStat.fullBattleInfo.armorProfGain[0].toFixed(2)
+				+ ", <b>Light Armor Gain</b>: " + hvStat.fullBattleInfo.armorProfGain[1].toFixed(2)
+				+ ", <b>Heavy Armor Gain</b>: " + hvStat.fullBattleInfo.armorProfGain[2].toFixed(2);
+		}
+		if (hvStat.settings.isShowEndProfsWeapon) {
+			a += "<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
+				+ "<b>One-Handed Gain</b>: " + hvStat.fullBattleInfo.weapProfGain[0].toFixed(2)
+				+ ", <b>Two-Handed Gain</b>: " + hvStat.fullBattleInfo.weapProfGain[1].toFixed(2)
+				+ ", <b>Dual Wielding Gain</b>: " + hvStat.fullBattleInfo.weapProfGain[2].toFixed(2)
+				+ ", <b>Staff Gain</b>: " + hvStat.fullBattleInfo.weapProfGain[3].toFixed(2);
 		}
 	}
 	return a;
@@ -5618,6 +5783,17 @@ function initSettingsPane() {
 		$("input[name=isShowEndProfsArmor]").removeAttr("checked");
 		$("input[name=isShowEndProfsWeapon]").removeAttr("checked");
 	}
+	if (hvStat.settings.isShowCumEndStats) $("input[name=isShowCumEndStats]").attr("checked", "checked");
+	if (hvStat.settings.isShowCumEndProfs) {
+		$("input[name=isShowCumEndProfs]").attr("checked", "checked");
+		if (hvStat.settings.isShowCumEndProfsMagic) $("input[name=isShowCumEndProfsMagic]").attr("checked", "checked");
+		if (hvStat.settings.isShowCumEndProfsArmor) $("input[name=isShowCumEndProfsArmor]").attr("checked", "checked");
+		if (hvStat.settings.isShowCumEndProfsWeapon) $("input[name=isShowCumEndProfsWeapon]").attr("checked", "checked");
+	} else {
+		$("input[name=isShowCumEndProfsMagic]").removeAttr("checked");
+		$("input[name=isShowCumEndProfsArmor]").removeAttr("checked");
+		$("input[name=isShowCumEndProfsWeapon]").removeAttr("checked");
+	}
 	if (hvStat.settings.autoAdvanceBattleRound) $("input[name=autoAdvanceBattleRound]").attr("checked", "checked");
 	$("input[name=autoAdvanceBattleRoundDelay]").attr("value", hvStat.settings.autoAdvanceBattleRoundDelay);
 
@@ -5798,6 +5974,11 @@ function initSettingsPane() {
 	$("input[name=isShowEndProfsMagic]").click(saveSettings); //isShowEndProfs added by Ilirith
 	$("input[name=isShowEndProfsArmor]").click(saveSettings); //isShowEndProfs added by Ilirith
 	$("input[name=isShowEndProfsWeapon]").click(saveSettings); //isShowEndProfs added by Ilirith
+	$("input[name=isShowCumEndStats]").click(saveSettings);
+	$("input[name=isShowCumEndProfs]").click(saveSettings);
+	$("input[name=isShowCumEndProfsMagic]").click(saveSettings);
+	$("input[name=isShowCumEndProfsArmor]").click(saveSettings);
+	$("input[name=isShowCumEndProfsWeapon]").click(saveSettings);
 	$("input[name=autoAdvanceBattleRound]").click(saveSettings);
 	$("input[name=autoAdvanceBattleRoundDelay]").change(saveSettings);
 
@@ -6543,6 +6724,9 @@ hvStat.startup = {
 					showBattleEndStats();
 				}
 				saveStats();
+				if (hv.battle.finished && hvStat.settings.isShowCumEndStats) {
+					showFullBattleEndStats();
+				}
 				hvStat.storage.roundInfo.remove();
 				if (hvStat.settings.autoAdvanceBattleRound) {
 					hvStat.battle.advanceRound();
@@ -6551,6 +6735,9 @@ hvStat.startup = {
 			HVStat.AlertAllFromQueue();
 		} else {
 			hvStat.storage.roundInfo.remove();
+			if (!hv.location.isRiddle) {
+				hvStat.storage.fullBattleInfo.remove();
+			}
 			if ((hvStat.settings.isStartAlert || hvStat.settings.isShowEquippedSet) && !hv.settings.useHVFontEngine) {
 				captureCharacterStatuses();
 			}
