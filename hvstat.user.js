@@ -643,6 +643,7 @@ hvStat.storage.initialValue = {
 		isEnableSkillHotkey: false,
 		reverseSkillHotkeyTraversalOrder: false,
 		enableOFCHotkey: false,
+		isPreventAlts: false,
 		enableScrollHotkey: false,
 		isDisableForgeHotKeys: false,
 		enableShrineKeyPatch: false,
@@ -1381,6 +1382,11 @@ hvStat.keyboard = {
 					}
 				}
 			}
+		}
+		if (hvStat.settings.isPreventAlts && event.altKey && (hv.battle.active || hv.location.isRiddle)
+				&& ((KeyboardEvent.DOM_VK_0<=event.keyCode && event.keyCode<=KeyboardEvent.DOM_VK_9)
+					|| (KeyboardEvent.DOM_VK_NUMPAD0<=event.keyCode && event.keyCode<=KeyboardEvent.DOM_VK_NUMPAD9))) {
+			event.preventDefault();
 		}
 	},
 };
@@ -5568,6 +5574,7 @@ function initSettingsPane() {
 	if (hvStat.settings.isEnableSkillHotkey) $("input[name=isEnableSkillHotkey]").attr("checked", "checked");
 	if (hvStat.settings.reverseSkillHotkeyTraversalOrder) $("input[name=reverseSkillHotkeyTraversalOrder]").attr("checked", "checked");
 	if (hvStat.settings.enableOFCHotkey) $("input[name=enableOFCHotkey]").attr("checked", "checked");
+	if (hvStat.settings.isPreventAlts) $("input[name=isPreventAlts]").attr("checked", "checked");
 	if (hvStat.settings.enableScrollHotkey) $("input[name=enableScrollHotkey]").attr("checked", "checked");
 	if (hvStat.settings.isDisableForgeHotKeys) $("input[name=isDisableForgeHotKeys]").attr("checked", "checked");
 	if (hvStat.settings.enableShrineKeyPatch) $("input[name=enableShrineKeyPatch]").attr("checked", "checked");
@@ -5753,6 +5760,7 @@ function initSettingsPane() {
 	$("input[name=isEnableSkillHotkey]").click(saveSettings);
 	$("input[name=reverseSkillHotkeyTraversalOrder]").click(saveSettings);
 	$("input[name=enableOFCHotkey]").click(saveSettings);
+	$("input[name=isPreventAlts]").click(saveSettings);
 	$("input[name=enableScrollHotkey]").click(saveSettings);
 	$("input[name=isDisableForgeHotKeys]").click(saveSettings);
 	$("input[name=enableShrineKeyPatch]").click(saveSettings);
@@ -5898,6 +5906,7 @@ function saveSettings() {
 	hvStat.settings.isEnableSkillHotkey = $("input[name=isEnableSkillHotkey]").get(0).checked;
 	hvStat.settings.reverseSkillHotkeyTraversalOrder = $("input[name=reverseSkillHotkeyTraversalOrder]").get(0).checked;
 	hvStat.settings.enableOFCHotkey = $("input[name=enableOFCHotkey]").get(0).checked;
+	hvStat.settings.isPreventAlts = $("input[name=isPreventAlts]").get(0).checked;
 	hvStat.settings.enableScrollHotkey = $("input[name=enableScrollHotkey]").get(0).checked;
 	hvStat.settings.isDisableForgeHotKeys = $("input[name=isDisableForgeHotKeys]").get(0).checked;
 	hvStat.settings.enableShrineKeyPatch = $("input[name=enableShrineKeyPatch]").get(0).checked;
