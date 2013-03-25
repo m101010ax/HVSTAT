@@ -36,6 +36,12 @@
 // @run-at          document-start
 // ==/UserScript==
 
+function logData(path, data) {
+	var x=new XMLHttpRequest();
+	x.open("POST", "http://localhost:8123/"+path, false);
+	x.send(data);
+}
+
 //------------------------------------
 // Remove vendor prefix
 //------------------------------------
