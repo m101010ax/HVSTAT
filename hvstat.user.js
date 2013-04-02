@@ -37,9 +37,12 @@
 // ==/UserScript==
 
 function logData(path, data) {
-	var x=new XMLHttpRequest();
-	x.open("POST", "http://localhost:8123/"+path, false);
-	x.send(data);
+	GM_xmlhttpRequest({
+		method: "POST",
+		url: "http://localhost:8123/"+path,
+		data: data+"",
+		synchronous: false,
+	});
 }
 
 //------------------------------------
