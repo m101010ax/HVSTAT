@@ -4317,11 +4317,13 @@ function collectRoundInfo() {
 	var turnLog = new HVStat.TurnLog();
 	var joinedLogStringOfCurrentTurn = turnLog.texts.join("\n");
 
+
 	for (var turnLogIndex = 0; turnLogIndex < turnLog.texts.length; turnLogIndex++) {
 		var reResult;
 		var logText = turnLog.texts[turnLogIndex];
 		var logHTML = turnLog.innerHTMLs[turnLogIndex];
 		var logHTMLOfPreviousRow = turnLog.innerHTMLs[turnLogIndex - 1];
+		logData(turnLog.turn+"_"+turnLogIndex, logHTML);
 		if (turnLog.turn === 0) {
 			if (logHTML.match(/HP=/)) {
 				HVStat.monsters[monsterIndex].fetchStartingLog(logHTML);
