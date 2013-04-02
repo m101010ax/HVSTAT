@@ -638,7 +638,6 @@ hvStat.storage.initialValue = {
 		customPageTitle: "HV",
 		isShowEquippedSet: false,
 		isShowSidebarProfs: false,
-		isCondenseAlerts: false,
 		isStartAlert: false,
 		StartAlertHP: 95,
 		StartAlertMP: 95,
@@ -697,6 +696,8 @@ hvStat.storage.initialValue = {
 		isShowCumEndProfsWeapon: true,
 		autoAdvanceBattleRound: false,
 		autoAdvanceBattleRoundDelay: 500,
+		isCondenseAlerts: false,
+		delayRoundEndAlerts:false,
 
 		// Warning System
 		// - Self Status
@@ -2161,6 +2162,7 @@ var HVStat = {	// TODO: To be refactored
 	key_mpAlertAlreadyShown: "hvStat.magicAlertShown",
 	key_spAlertAlreadyShown: "hvStat.spiritAlertShown",
 	key_ocAlertAlreadyShown: "hvStat.overchargeAlertShown",
+	key_queuedAlerts: "hvstat.queuedAlerts",
 
 	// indexedDB
 	idb: null,
@@ -2409,6 +2411,19 @@ HVStat.AlertAllFromQueue = function () {
 			alert(HVStat.alertQueue.shift());
 		}
 	}
+}
+
+HVStat.stashAlerts = function () {
+	hvStat.storage.setItem(HVStat.key_queuedAlerts, HVStat.alertQueue);
+	HVStat.alertQueue.length=0;
+}
+
+HVStat.restoreAlerts = function () {
+	var q=hvStat.storage.getItem(HVStat.key_queuedAlerts);
+	if (q!==null) {
+		HVStat.alertQueue=q;
+	}
+	hvStat.storage.removeItem(HVStat.key_queuedAlerts);
 }
 
 //------------------------------------
@@ -5725,7 +5740,6 @@ function initSettingsPane() {
 	$("input[name=customPageTitle]").attr("value", hvStat.settings.customPageTitle);
 	if (hvStat.settings.isShowEquippedSet) $("input[name=isShowEquippedSet]").attr("checked", "checked");
 	if (hvStat.settings.isShowSidebarProfs) $("input[name=isShowSidebarProfs]").attr("checked", "checked");
-	if (hvStat.settings.isCondenseAlerts) $("input[name=isCondenseAlerts]").attr("checked", "checked");
 	if (hvStat.settings.isStartAlert) $("input[name=isStartAlert]").attr("checked", "checked");
 	$("input[name=StartAlertHP]").attr("value", hvStat.settings.StartAlertHP);
 	$("input[name=StartAlertMP]").attr("value", hvStat.settings.StartAlertMP);
@@ -5802,6 +5816,8 @@ function initSettingsPane() {
 	}
 	if (hvStat.settings.autoAdvanceBattleRound) $("input[name=autoAdvanceBattleRound]").attr("checked", "checked");
 	$("input[name=autoAdvanceBattleRoundDelay]").attr("value", hvStat.settings.autoAdvanceBattleRoundDelay);
+	if (hvStat.settings.isCondenseAlerts) $("input[name=isCondenseAlerts]").attr("checked", "checked");
+	if (hvStat.settings.delayRoundEndAlerts) $("input[name=delayRoundEndAlerts]").attr("checked", "checked");
 
 	// Warning System
 	// - Self Status
@@ -5928,7 +5944,6 @@ function initSettingsPane() {
 	$("input[name=customPageTitle]").change(saveSettings);
 	$("input[name=isShowEquippedSet]").click(saveSettings);
 	$("input[name=isShowSidebarProfs]").click(reminderAndSaveSettings);
-	$("input[name=isCondenseAlerts]").click(saveSettings);
 	$("input[name=isStartAlert]").click(saveSettings);
 	$("input[name=StartAlertHP]").change(saveSettings);
 	$("input[name=StartAlertMP]").change(saveSettings);
@@ -5987,6 +6002,8 @@ function initSettingsPane() {
 	$("input[name=isShowCumEndProfsWeapon]").click(saveSettings);
 	$("input[name=autoAdvanceBattleRound]").click(saveSettings);
 	$("input[name=autoAdvanceBattleRoundDelay]").change(saveSettings);
+	$("input[name=isCondenseAlerts]").click(saveSettings);
+	$("input[name=delayRoundEndAlerts]").click(saveSettings);
 
 	// Warning System
 	// - Self Status
@@ -6074,7 +6091,6 @@ function saveSettings() {
 	hvStat.settings.customPageTitle = $("input[name=customPageTitle]").get(0).value;
 	hvStat.settings.isShowEquippedSet = $("input[name=isShowEquippedSet]").get(0).checked;
 	hvStat.settings.isShowSidebarProfs = $("input[name=isShowSidebarProfs]").get(0).checked;
-	hvStat.settings.isCondenseAlerts = $("input[name=isCondenseAlerts]").get(0).checked;
 	hvStat.settings.isStartAlert = $("input[name=isStartAlert]").get(0).checked;
 	hvStat.settings.StartAlertHP = $("input[name=StartAlertHP]").get(0).value;
 	hvStat.settings.StartAlertMP = $("input[name=StartAlertMP]").get(0).value;
@@ -6133,6 +6149,8 @@ function saveSettings() {
 	hvStat.settings.isShowEndProfsWeapon = $("input[name=isShowEndProfsWeapon]").get(0).checked; //isShowEndProfs added by Ilirith
 	hvStat.settings.autoAdvanceBattleRound = $("input[name=autoAdvanceBattleRound]").get(0).checked;
 	hvStat.settings.autoAdvanceBattleRoundDelay = $("input[name=autoAdvanceBattleRoundDelay]").get(0).value;
+	hvStat.settings.isCondenseAlerts = $("input[name=isCondenseAlerts]").get(0).checked;
+	hvStat.settings.delayRoundEndAlerts = $("input[name=delayRoundEndAlerts]").get(0).checked;
 
 	// Warning System
 	// - Self Status
@@ -6330,6 +6348,7 @@ function HVMasterReset() {
 		key_mpAlertAlreadyShown,
 		key_spAlertAlreadyShown,
 		key_ocAlertAlreadyShown,
+		key_queuedAlerts,
 	];
 	var i = keys.length;
 	while (i--) {
@@ -6698,6 +6717,9 @@ hvStat.startup = {
 		}
 		if (hv.battle.active) {
 			hvStat.battle.setup();
+			if (hvStat.settings.delayRoundEndAlerts) {
+				HVStat.restoreAlerts();
+			}
 			collectRoundInfo();
 			if (hvStat.roundInfo.currRound > 0 && hvStat.settings.isShowRoundCounter) {
 				hvStat.battle.enhancement.roundCounter.create();
@@ -6736,6 +6758,10 @@ hvStat.startup = {
 				hvStat.storage.roundInfo.remove();
 				if (hvStat.settings.autoAdvanceBattleRound) {
 					hvStat.battle.advanceRound();
+				}
+				//Don't stash alerts if the battle's over
+				if (hvStat.settings.delayRoundEndAlerts && !hv.battle.finished) {
+					HVStat.stashAlerts();
 				}
 			}
 			HVStat.AlertAllFromQueue();
