@@ -1104,6 +1104,8 @@ hvStat.storage.initialValue = {
 		supportGain: 0,	// stats
 		weapProfGain: [0, 0, 0, 0],	// stats
 		armorProfGain: [0, 0, 0],	// stats
+		credits: 0,
+		exp: 0,
 	},
 	// Warning State object
 	warningState: {
@@ -5129,6 +5131,8 @@ function saveStats() {
 		hvStat.fullBattleInfo.armorProfGain[0] += hvStat.roundInfo.armorProfGain[0];
 		hvStat.fullBattleInfo.armorProfGain[1] += hvStat.roundInfo.armorProfGain[1];
 		hvStat.fullBattleInfo.armorProfGain[2] += hvStat.roundInfo.armorProfGain[2];
+		hvStat.fullBattleInfo.credits += c;
+		hvStat.fullBattleInfo.exp += d;
 	}
 	hvStat.arenaRewards.tokenDrops[0] += _tokenDrops[0];
 	hvStat.arenaRewards.tokenDrops[1] += _tokenDrops[1];
@@ -5238,6 +5242,9 @@ function getFullBattleEndStatsHtml() {
 		+ "<b>Crits taken</b>: " + formatProbability(hvStat.fullBattleInfo.mHits[1], b, 2) + ", "
 		+ "<b>Total dmg taken</b>: " + (hvStat.fullBattleInfo.dTaken[0] + hvStat.fullBattleInfo.dTaken[1]) + ", "
 		+ "<b>Avg dmg taken</b>: " + hvStat.util.ratio(hvStat.fullBattleInfo.dTaken[0] + hvStat.fullBattleInfo.dTaken[1], b).toFixed(2);
+	a+="<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
+		+ "<b>Credits</b>: " + hvStat.fullBattleInfo.credits + ", "
+		+ "<b>Exp</b>: " + hvStat.fullBattleInfo.exp;
 	if (hvStat.settings.isShowEndProfs && (hvStat.settings.isShowEndProfsMagic || hvStat.settings.isShowEndProfsArmor || hvStat.settings.isShowEndProfsWeapon)) { //isShowEndProfs added by Ilirith
 		if (hvStat.settings.isShowEndProfsMagic) {
 			a += "<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
