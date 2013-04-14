@@ -1106,6 +1106,7 @@ hvStat.storage.initialValue = {
 		armorProfGain: [0, 0, 0],	// stats
 		credits: 0,
 		exp: 0,
+		startTime: Date.now(),
 	},
 	// Warning State object
 	warningState: {
@@ -5242,9 +5243,41 @@ function getFullBattleEndStatsHtml() {
 		+ "<b>Crits taken</b>: " + formatProbability(hvStat.fullBattleInfo.mHits[1], b, 2) + ", "
 		+ "<b>Total dmg taken</b>: " + (hvStat.fullBattleInfo.dTaken[0] + hvStat.fullBattleInfo.dTaken[1]) + ", "
 		+ "<b>Avg dmg taken</b>: " + hvStat.util.ratio(hvStat.fullBattleInfo.dTaken[0] + hvStat.fullBattleInfo.dTaken[1], b).toFixed(2);
+
+	var elapsed=function (startMillis) {
+		var secs = 0, mins = 0, hours = 0, days = 0;
+		var str;
+		secs = Math.floor((Date.now() - startMillis) / (1000));
+		if (secs >= 60) {
+			mins = Math.floor(secs / 60);
+			secs = secs % 60;
+		}
+		if (mins >= 60) {
+			hours = Math.floor(mins / 60);
+			mins = mins % 60;
+		}
+		if (hours >= 24) {
+			days = Math.floor(hours / 24);
+			hours = hours % 24;
+		}
+		str = String(secs) + ((secs !== 0) ? " secs" : " sec");
+		if (mins > 0) {
+			str = String(mins) + ((mins > 1) ? " mins, " : " min, ") + str;
+		}
+		if (hours > 0) {
+			str = String(hours) + ((hours > 1) ? " hours, " : " hour, ") + str;
+		}
+		if (days > 0) {
+			str = String(days) + ((days > 1) ? " days, " : " day, ") + str;
+		}
+		return str;
+	} (hvStat.fullBattleInfo.startTime);
 	a+="<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
+		+ "<b>Time Elapsed</b>: " + elapsed + ", "
 		+ "<b>Credits</b>: " + hvStat.fullBattleInfo.credits + ", "
-		+ "<b>Exp</b>: " + hvStat.fullBattleInfo.exp;
+		+ "<b>Credits/s</b>: " + (1000*hvStat.fullBattleInfo.credits/(Date.now() - hvStat.fullBattleInfo.startTime)).toFixed(2) + ", "
+		+ "<b>Exp</b>: " + hvStat.fullBattleInfo.exp + ", "
+		+ "<b>Exp/s</b>: " + (1000*hvStat.fullBattleInfo.exp/(Date.now() - hvStat.fullBattleInfo.startTime)).toFixed(2);
 	if (hvStat.settings.isShowEndProfs && (hvStat.settings.isShowEndProfsMagic || hvStat.settings.isShowEndProfsArmor || hvStat.settings.isShowEndProfsWeapon)) { //isShowEndProfs added by Ilirith
 		if (hvStat.settings.isShowEndProfsMagic) {
 			a += "<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
