@@ -1106,7 +1106,7 @@ hvStat.storage.initialValue = {
 		armorProfGain: [0, 0, 0],	// stats
 		credits: 0,
 		exp: 0,
-		startTime: Date.now(),
+		startTime: -1,
 	},
 	// Warning State object
 	warningState: {
@@ -6715,6 +6715,10 @@ hvStat.startup = {
 			collectRoundInfo();
 			if (hvStat.roundInfo.currRound > 0 && hvStat.settings.isShowRoundCounter) {
 				hvStat.battle.enhancement.roundCounter.create();
+			}
+			if (hvStat.fullBattleInfo.startTime === -1) {
+				hvStat.fullBattleInfo.startTime=Date.now();
+				hvStat.storage.fullBattleInfo.save();
 			}
 			hvStat.battle.monster.showHealthAll();
 			if (!hvStat.database.loadingMonsterInfoFromDB) {
