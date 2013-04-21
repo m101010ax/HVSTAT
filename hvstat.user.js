@@ -4730,7 +4730,6 @@ function collectRoundInfo() {
 			}
 		}
 		var l = /\[.*?\]/i;
-		var n;
 		var t = 1;
 		if (logHTML.match(/dropped.*?color:.*?red.*?\[.*?\]/ig)) {
 			_equips++;
@@ -4748,16 +4747,10 @@ function collectRoundInfo() {
 			if (hvStat.settings.isTrackItems) {
 				hvStat.drops.artDrop++;
 				hvStat.drops.artDropbyBT[hvStat.roundInfo.battleType]++;
-				n = true;
-				var j = hvStat.drops.artArry.length;
-				while (j--) {
-					if (itemToAdd === hvStat.drops.artArry[j]) {
-						hvStat.drops.artQtyArry[j]++;
-						n = false;
-						break;
-					}
-				}
-				if (n) {
+				var j = hvStat.drops.artArry.indexOf(itemToAdd);
+				if (j !== -1) {
+					hvStat.drops.artQtyArry[j]++;
+				} else {
 					hvStat.drops.artQtyArry.push(1);
 					hvStat.drops.artArry.push(itemToAdd);
 				}
@@ -4772,14 +4765,11 @@ function collectRoundInfo() {
 				itemToAdd = itemToAdd.replace(/(\d){1,2}.?x?.?/, "");
 				hvStat.drops.crysDropbyBT[hvStat.roundInfo.battleType]++;
 			}
-			var j = hvStat.drops.itemArry.length;
-			while (j--) {
-				if (itemToAdd === hvStat.drops.itemArry[j]) {
-					hvStat.drops.itemQtyArry[j] += t;
-					hvStat.drops.itemDrop++;
-					hvStat.drops.itemDropbyBT[hvStat.roundInfo.battleType]++;
-					break;
-				}
+			var j = hvStat.drops.itemArry.indexOf(itemToAdd);
+			if (j !== -1) {
+				hvStat.drops.itemQtyArry[j] += t;
+				hvStat.drops.itemDrop++;
+				hvStat.drops.itemDropbyBT[hvStat.roundInfo.battleType]++;
 			}
 		} else if (hvStat.settings.isTrackItems && logHTML.match(/dropped.*?color:.*?\#461B7E.*?\[.*?\]/ig)) {
 			hvStat.drops.dropChances--;
@@ -4799,16 +4789,10 @@ function collectRoundInfo() {
 			_lastArtName = itemToAdd;
 			if (hvStat.settings.isTrackRewards) {
 				hvStat.arenaRewards.artRwrd++;
-				n = true;
-				var j = hvStat.arenaRewards.artRwrdArry.length;
-				while (j--) {
-					if (itemToAdd === hvStat.arenaRewards.artRwrdArry[j]) {
-						hvStat.arenaRewards.artRwrdQtyArry[j]++;
-						n = false;
-						break;
-					}
-				}
-				if (n) {
+				var j = hvStat.arenaRewards.artRwrdArry.indexOf(itemToAdd);
+				if (j !== -1) {
+					hvStat.arenaRewards.artRwrdQtyArry[j]++;
+				} else {
 					hvStat.arenaRewards.artRwrdQtyArry.push(1);
 					hvStat.arenaRewards.artRwrdArry.push(itemToAdd);
 				}
@@ -4820,16 +4804,10 @@ function collectRoundInfo() {
 				t = parseInt("0" + RegExp.$1, 10);
 				itemToAdd = itemToAdd.replace(/\dx /, "");
 			}
-			n = true;
-			var j = hvStat.arenaRewards.itemRwrdArry.length;
-			while (j--) {
-				if (itemToAdd === hvStat.arenaRewards.itemRwrdArry[j]) {
-					hvStat.arenaRewards.itemRwrdQtyArry[j] += t;
-					n = false;
-					break;
-				}
-			}
-			if (n) {
+			var j = hvStat.arenaRewards.itemRwrdArry.indexOf(itemToAdd);
+			if (j !== -1) {
+				hvStat.arenaRewards.itemRwrdQtyArry[j] += t;
+			} else {
 				hvStat.arenaRewards.itemRwrdQtyArry.push(1);
 				hvStat.arenaRewards.itemRwrdArry.push(itemToAdd);
 			}
