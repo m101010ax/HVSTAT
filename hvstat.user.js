@@ -5252,10 +5252,10 @@ function getFullBattleEndStatsHtml() {
 	} (hvStat.fullBattleInfo.startTime);
 	a+="<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
 		+ "<b>Time Elapsed</b>: " + elapsed + ", "
-		+ "<b>Credits</b>: " + hvStat.fullBattleInfo.credits + ", "
+		+ "<b>Credits</b>: " + hvStat.util.numberWithCommas(hvStat.fullBattleInfo.credits) + ", "
 		+ "<b>Credits/s</b>: " + (1000*hvStat.fullBattleInfo.credits/(Date.now() - hvStat.fullBattleInfo.startTime)).toFixed(2) + ", "
-		+ "<b>Exp</b>: " + hvStat.fullBattleInfo.exp + ", "
-		+ "<b>Exp/s</b>: " + (1000*hvStat.fullBattleInfo.exp/(Date.now() - hvStat.fullBattleInfo.startTime)).toFixed(2);
+		+ "<b>Exp</b>: " + hvStat.util.numberWithCommas(hvStat.fullBattleInfo.exp) + ", "
+		+ "<b>Exp/s</b>: " + hvStat.util.numberWithCommas((1000*hvStat.fullBattleInfo.exp/(Date.now() - hvStat.fullBattleInfo.startTime)).toFixed(2));
 	if (hvStat.settings.isShowEndProfs && (hvStat.settings.isShowEndProfsMagic || hvStat.settings.isShowEndProfsArmor || hvStat.settings.isShowEndProfsWeapon)) { //isShowEndProfs added by Ilirith
 		if (hvStat.settings.isShowEndProfsMagic) {
 			a += "<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
