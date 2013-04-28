@@ -5194,34 +5194,6 @@ function getFullBattleEndStatsHtml() {
 			+ " (" + String(hvStat.util.percentRatio(numerator, denominator, digits)) + "%)";
 	}
 
-	var f = hvStat.fullBattleInfo.sHits[0] + hvStat.fullBattleInfo.sHits[1] + hvStat.fullBattleInfo.depCasts + hvStat.fullBattleInfo.sResists;
-	var e = hvStat.fullBattleInfo.sHits[0] + hvStat.fullBattleInfo.sHits[1] + hvStat.fullBattleInfo.depCasts;
-	var d = hvStat.fullBattleInfo.aHits[0] + hvStat.fullBattleInfo.aHits[1];
-	var c = hvStat.fullBattleInfo.sHits[0] + hvStat.fullBattleInfo.sHits[1];
-	var b = hvStat.fullBattleInfo.mHits[0] + hvStat.fullBattleInfo.mHits[1];
-	var ab = hvStat.fullBattleInfo.aOffhands[0] + hvStat.fullBattleInfo.aOffhands[2];
-	var a = "<b>Accuracy</b>: " + formatProbability(d, hvStat.fullBattleInfo.aAttempts, 2) + ", "
-		+ "<b>Crits</b>: " + formatProbability(hvStat.fullBattleInfo.aHits[1], d, 2) + ", "
-		+ "<b>Offhand</b>: " + formatProbability(ab, d, 2) + ", "
-		+ "<b>Domino</b>: " + formatProbability(hvStat.fullBattleInfo.dominoHits, d, 2) + ", "
-		+ "<b>OverStrikes</b>: " + formatProbability(hvStat.fullBattleInfo.overStrikes, d, 2) + ", "
-		+ "<b>Coalesce</b>: " + formatProbability(hvStat.fullBattleInfo.coalesce, e, 2) + ", "
-		+ "<b>M. Accuracy</b>: " + formatProbability(e, f, 2) + ", "
-		+ "<b>Spell Crits</b>: " + formatProbability(hvStat.fullBattleInfo.sHits[1], c, 2) + ", "
-		+ "<b>Avg hit dmg</b>: " + hvStat.util.ratio(hvStat.fullBattleInfo.dDealt[0], hvStat.fullBattleInfo.aHits[0]).toFixed(2) + "|" + hvStat.util.ratio(hvStat.fullBattleInfo.dDealtSp[0], hvStat.fullBattleInfo.sHits[0]).toFixed(2) + ", "
-		+ "<b>Avg crit dmg</b>: " + hvStat.util.ratio(hvStat.fullBattleInfo.dDealt[1], hvStat.fullBattleInfo.aHits[1]).toFixed(2) + "|" + hvStat.util.ratio(hvStat.fullBattleInfo.dDealtSp[1], hvStat.fullBattleInfo.sHits[1]).toFixed(2) + ", "
-		+ "<b>Avg dmg</b>: " + hvStat.util.ratio(hvStat.fullBattleInfo.dDealt[0] + hvStat.fullBattleInfo.dDealt[1], d).toFixed(2) + "|" + hvStat.util.ratio(hvStat.fullBattleInfo.dDealtSp[0] + hvStat.fullBattleInfo.dDealtSp[1], c).toFixed(2)
-		+ "<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
-		+ "<b>Hits taken</b>: " + formatProbability(b, hvStat.fullBattleInfo.mAttempts, 2) + ", "
-		+ "<b>Missed</b>: " + formatProbability(hvStat.fullBattleInfo.pDodges, hvStat.fullBattleInfo.mAttempts, 2) + ", "
-		+ "<b>Evaded</b>: " + formatProbability(hvStat.fullBattleInfo.pEvades, hvStat.fullBattleInfo.mAttempts, 2) + ", "
-		+ "<b>Blocked</b>: " + formatProbability(hvStat.fullBattleInfo.pBlocks, hvStat.fullBattleInfo.mAttempts, 2) + ", "
-		+ "<b>Parried</b>: " + formatProbability(hvStat.fullBattleInfo.pParries, hvStat.fullBattleInfo.mAttempts, 2) + ", "
-		+ "<b>Resisted</b>: " + formatProbability(hvStat.fullBattleInfo.pResists, hvStat.fullBattleInfo.mAttempts, 2) + ", "
-		+ "<b>Crits taken</b>: " + formatProbability(hvStat.fullBattleInfo.mHits[1], b, 2) + ", "
-		+ "<b>Total dmg taken</b>: " + (hvStat.fullBattleInfo.dTaken[0] + hvStat.fullBattleInfo.dTaken[1]) + ", "
-		+ "<b>Avg dmg taken</b>: " + hvStat.util.ratio(hvStat.fullBattleInfo.dTaken[0] + hvStat.fullBattleInfo.dTaken[1], b).toFixed(2);
-
 	var elapsed=function (startMillis) {
 		var secs = 0, mins = 0, hours = 0, days = 0;
 		var str;
@@ -5250,42 +5222,83 @@ function getFullBattleEndStatsHtml() {
 		}
 		return str;
 	} (hvStat.fullBattleInfo.startTime);
-	a+="<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
-		+ "<b>Time Elapsed</b>: " + elapsed + ", "
-		+ "<b>Credits</b>: " + hvStat.util.numberWithCommas(hvStat.fullBattleInfo.credits) + ", "
-		+ "<b>Credits/s</b>: " + (1000*hvStat.fullBattleInfo.credits/(Date.now() - hvStat.fullBattleInfo.startTime)).toFixed(2) + ", "
-		+ "<b>Exp</b>: " + hvStat.util.numberWithCommas(hvStat.fullBattleInfo.exp) + ", "
-		+ "<b>Exp/s</b>: " + hvStat.util.numberWithCommas((1000*hvStat.fullBattleInfo.exp/(Date.now() - hvStat.fullBattleInfo.startTime)).toFixed(2));
-	if (hvStat.settings.isShowEndProfs && (hvStat.settings.isShowEndProfsMagic || hvStat.settings.isShowEndProfsArmor || hvStat.settings.isShowEndProfsWeapon)) { //isShowEndProfs added by Ilirith
+
+	var f = hvStat.fullBattleInfo.sHits[0] + hvStat.fullBattleInfo.sHits[1] + hvStat.fullBattleInfo.depCasts + hvStat.fullBattleInfo.sResists;
+	var e = hvStat.fullBattleInfo.sHits[0] + hvStat.fullBattleInfo.sHits[1] + hvStat.fullBattleInfo.depCasts;
+	var d = hvStat.fullBattleInfo.aHits[0] + hvStat.fullBattleInfo.aHits[1];
+	var c = hvStat.fullBattleInfo.sHits[0] + hvStat.fullBattleInfo.sHits[1];
+	var b = hvStat.fullBattleInfo.mHits[0] + hvStat.fullBattleInfo.mHits[1];
+	var ab = hvStat.fullBattleInfo.aOffhands[0] + hvStat.fullBattleInfo.aOffhands[2];
+	var stats = [
+		[["Accuracy", formatProbability(d, hvStat.fullBattleInfo.aAttempts, 2)],
+		["Crits", formatProbability(hvStat.fullBattleInfo.aHits[1], d, 2)],
+		["Offhand", formatProbability(ab, d, 2)],
+		["Domino", formatProbability(hvStat.fullBattleInfo.dominoHits, d, 2)],
+		["OverStrikes", formatProbability(hvStat.fullBattleInfo.overStrikes, d, 2)],
+		["Coalesce", formatProbability(hvStat.fullBattleInfo.coalesce, e, 2)],
+		["M. Accuracy", formatProbability(e, f, 2)],
+		["Spell Crits", formatProbability(hvStat.fullBattleInfo.sHits[1], c, 2)],
+		["Avg hit dmg", hvStat.util.ratio(hvStat.fullBattleInfo.dDealt[0], hvStat.fullBattleInfo.aHits[0]).toFixed(2) + "|" + hvStat.util.ratio(hvStat.fullBattleInfo.dDealtSp[0], hvStat.fullBattleInfo.sHits[0]).toFixed(2)],
+		["Avg crit dmg", hvStat.util.ratio(hvStat.fullBattleInfo.dDealt[1], hvStat.fullBattleInfo.aHits[1]).toFixed(2) + "|" + hvStat.util.ratio(hvStat.fullBattleInfo.dDealtSp[1], hvStat.fullBattleInfo.sHits[1]).toFixed(2)],
+		["Avg dmg", hvStat.util.ratio(hvStat.fullBattleInfo.dDealt[0] + hvStat.fullBattleInfo.dDealt[1], d).toFixed(2) + "|" + hvStat.util.ratio(hvStat.fullBattleInfo.dDealtSp[0] + hvStat.fullBattleInfo.dDealtSp[1], c).toFixed(2)]],
+
+		[["Hits taken", formatProbability(b, hvStat.fullBattleInfo.mAttempts, 2)],
+		["Missed", formatProbability(hvStat.fullBattleInfo.pDodges, hvStat.fullBattleInfo.mAttempts, 2)],
+		["Evaded", formatProbability(hvStat.fullBattleInfo.pEvades, hvStat.fullBattleInfo.mAttempts, 2)],
+		["Blocked", formatProbability(hvStat.fullBattleInfo.pBlocks, hvStat.fullBattleInfo.mAttempts, 2)],
+		["Parried", formatProbability(hvStat.fullBattleInfo.pParries, hvStat.fullBattleInfo.mAttempts, 2)],
+		["Resisted", formatProbability(hvStat.fullBattleInfo.pResists, hvStat.fullBattleInfo.mAttempts, 2)],
+		["Crits taken", formatProbability(hvStat.fullBattleInfo.mHits[1], b, 2)],
+		["Total dmg taken", (hvStat.fullBattleInfo.dTaken[0] + hvStat.fullBattleInfo.dTaken[1])],
+		["Avg dmg taken", hvStat.util.ratio(hvStat.fullBattleInfo.dTaken[0] + hvStat.fullBattleInfo.dTaken[1], b).toFixed(2)]],
+
+		[["Time Elapsed", elapsed],
+		["Credits", hvStat.util.numberWithCommas(hvStat.fullBattleInfo.credits)],
+		["Credits/s", (1000*hvStat.fullBattleInfo.credits/(Date.now() - hvStat.fullBattleInfo.startTime)).toFixed(2)],
+		["Exp", hvStat.util.numberWithCommas(hvStat.fullBattleInfo.exp)],
+		["Exp/s", hvStat.util.numberWithCommas((1000*hvStat.fullBattleInfo.exp/(Date.now() - hvStat.fullBattleInfo.startTime)).toFixed(2))]]];
+	if (hvStat.settings.isShowEndProfs && (hvStat.settings.isShowEndProfsMagic || hvStat.settings.isShowEndProfsArmor || hvStat.settings.isShowEndProfsWeapon)) {
 		if (hvStat.settings.isShowEndProfsMagic) {
-			a += "<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
-				+ "<b>Curative Spells</b>: " + hvStat.fullBattleInfo.curativeSpells
-				+ ", <b>Support Spells</b>: " + hvStat.fullBattleInfo.supportSpells
-				+ ", <b>Deprecating Spells</b>: " + hvStat.fullBattleInfo.depCasts
-				+ ", <b>Divine Spells</b>: " + hvStat.fullBattleInfo.divineCasts
-				+ ", <b>Forbidden Spells</b>: " + hvStat.fullBattleInfo.forbidCasts
-				+ ", <b>Elemental Spells</b>: " + hvStat.fullBattleInfo.elemCasts
-				+ "<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
-				+ "<b>SupportGain</b>: " + hvStat.fullBattleInfo.supportGain.toFixed(2)
-				+ ", <b>Deprecating Gain</b>: " + hvStat.fullBattleInfo.depGain.toFixed(2)
-				+ ", <b>Divine Gain</b>: " + hvStat.fullBattleInfo.divineGain.toFixed(2)
-				+ ", <b>Forbidden Gain</b>: " + hvStat.fullBattleInfo.forbidGain.toFixed(2)
-				+ ", <b>Elemental Gain</b>: " + hvStat.fullBattleInfo.elemGain.toFixed(2);
+			stats.push(
+				[["Curative Spells", hvStat.fullBattleInfo.curativeSpells],
+				["Support Spells", hvStat.fullBattleInfo.supportSpells],
+				["Deprecating Spells", hvStat.fullBattleInfo.depCasts],
+				["Divine Spells", hvStat.fullBattleInfo.divineCasts],
+				["Forbidden Spells", hvStat.fullBattleInfo.forbidCasts],
+				["Elemental Spells", hvStat.fullBattleInfo.elemCasts]],
+
+				[["SupportGain", hvStat.fullBattleInfo.supportGain.toFixed(2)],
+				["Deprecating Gain", hvStat.fullBattleInfo.depGain.toFixed(2)],
+				["Divine Gain", hvStat.fullBattleInfo.divineGain.toFixed(2)],
+				["Forbidden Gain", hvStat.fullBattleInfo.forbidGain.toFixed(2)],
+				["Elemental Gain", hvStat.fullBattleInfo.elemGain.toFixed(2)]]);
 		}
 		if (hvStat.settings.isShowEndProfsArmor) {
-			a += "<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
-				+ "<b>Cloth Gain</b>: " + hvStat.fullBattleInfo.armorProfGain[0].toFixed(2)
-				+ ", <b>Light Armor Gain</b>: " + hvStat.fullBattleInfo.armorProfGain[1].toFixed(2)
-				+ ", <b>Heavy Armor Gain</b>: " + hvStat.fullBattleInfo.armorProfGain[2].toFixed(2);
+			stats.push(
+				[["Cloth Gain", hvStat.fullBattleInfo.armorProfGain[0].toFixed(2)],
+				["Light Armor Gain", hvStat.fullBattleInfo.armorProfGain[1].toFixed(2)],
+				["Heavy Armor Gain", hvStat.fullBattleInfo.armorProfGain[2].toFixed(2)]]);
 		}
 		if (hvStat.settings.isShowEndProfsWeapon) {
-			a += "<hr style='height:1px;border:0;background-color:#333333;color:#333333' />"
-				+ "<b>One-Handed Gain</b>: " + hvStat.fullBattleInfo.weapProfGain[0].toFixed(2)
-				+ ", <b>Two-Handed Gain</b>: " + hvStat.fullBattleInfo.weapProfGain[1].toFixed(2)
-				+ ", <b>Dual Wielding Gain</b>: " + hvStat.fullBattleInfo.weapProfGain[2].toFixed(2)
-				+ ", <b>Staff Gain</b>: " + hvStat.fullBattleInfo.weapProfGain[3].toFixed(2);
+			stats.push(
+				[["One-Handed Gain", hvStat.fullBattleInfo.weapProfGain[0].toFixed(2)],
+				["Two-Handed Gain", hvStat.fullBattleInfo.weapProfGain[1].toFixed(2)],
+				["Dual Wielding Gain", hvStat.fullBattleInfo.weapProfGain[2].toFixed(2)],
+				["Staff Gain", hvStat.fullBattleInfo.weapProfGain[3].toFixed(2)]]);
 		}
 	}
+	function nonZero (stat) {
+		return parseFloat(stat[1], 10) !== 0.0;
+	}
+	function nonEmpty (arr) {
+		return arr.length !== 0;
+	}
+	function formatStat (stat) {
+		return "<b>" + stat[0] + "</b>: " + stat[1];
+	}
+	var stat_divider = " \u00B7 ";
+	var group_divider = "<hr style='height:1px;border:0;background-color:#333333;color:#333333' />";
+	var a = stats.map(function (group) {return group.filter(nonZero).map(formatStat).join(stat_divider);}).filter(nonEmpty).join(group_divider);
 	return a;
 }
 
