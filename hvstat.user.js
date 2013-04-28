@@ -36,6 +36,11 @@
 // @run-at          document-start
 // ==/UserScript==
 
+var script_start=Date.now();
+var p1_start;
+var p2_start;
+var p2_end;
+
 function logData(path, data) {
 	GM_xmlhttpRequest({
 		method: "POST",
@@ -6673,6 +6678,7 @@ hvStat.inventory.equipment = {
 //------------------------------------
 hvStat.startup = {
 	phase1: function () {
+		p1_start=Date.now();
 		hvStat.database.idbAccessQueue = new util.CallbackQueue();
 		hvStat.database.openIndexedDB(function (event) {
 			hvStat.database.idbAccessQueue.execute();
@@ -6687,6 +6693,7 @@ hvStat.startup = {
 		}
 	},
 	phase2: function () {
+		p2_start=Date.now();
 		if (hvStat.settings.adjustKeyEventHandling) {
 			hvStat.onkeydown = document.onkeydown;
 			document.onkeydown = null;
@@ -6828,6 +6835,8 @@ hvStat.startup = {
 		if (hvStat.settings.adjustKeyEventHandling) {
 			document.onkeydown = hvStat.onkeydown;
 		}
+		p2_end=Date.now();
+		logData(script_start, (p1_start-script_start)+"  "+(p2_start-p1_start)+"  "+(p2_end-p2_start));
 	},
 };
 
