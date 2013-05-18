@@ -2910,6 +2910,7 @@ hvStat.battle.eventLog.TurnEvents.prototype = {
 	process: function () {
 		for (var i = 0; i < this.messages.length; i++) {
 			var message = this.messages[i];
+			logData(this.turnNumber+"_"+i, message.innerHTML);
 			message.evaluate();
 		}
 	},
