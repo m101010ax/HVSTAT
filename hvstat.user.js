@@ -2913,7 +2913,7 @@ hvStat.battle.eventLog.messageTypeParams = {
 		evaluationFn: function (message) {
 		},
 	},
-	LEVEL_UP {
+	LEVEL_UP: {
 		regex: /^You have reached Level (\d+)\!$/,
 		relatedMessageTypeNames: null,
 		contentType: "text",
