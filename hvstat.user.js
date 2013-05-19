@@ -2859,6 +2859,22 @@ hvStat.battle.eventLog.messageTypeParams = {
 			hvStat.roundContext.exp = exp;
 		},
 	},
+
+	//These entries are for completeness.  They do nothing useful.
+	RIDDLE_SUCCESS: {
+		regex: /^The RiddleMaster is pleased with your answer, and grants you his blessings\.$/,
+		relatedMessageTypeNames: null,
+		contentType: "text",
+		evaluationFn: function (message) {
+		},
+	},
+	SPIRIT_ENGAGED: {
+		regex: /^Spirit Stance Engaged$/,
+		relatedMessageTypeNames: null,
+		contentType: "text",
+		evaluationFn: function (message) {
+		},
+	},
 };
 
 hvStat.battle.eventLog.TurnEvents = function (targetTurnNumber) {
