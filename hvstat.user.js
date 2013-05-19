@@ -1996,6 +1996,7 @@ hvStat.battle.eventLog.Message = function (text, innerHTML) {
 };
 hvStat.battle.eventLog.Message.prototype = {
 	initialize: function () {
+		var found=false;
 		for (var key in hvStat.battle.eventLog.messageTypes) {
 			var messageType = hvStat.battle.eventLog.messageTypes[key];
 			var regexResult = messageType.match(this.text, this.innerHTML);
@@ -2003,8 +2004,12 @@ hvStat.battle.eventLog.Message.prototype = {
 				this.messageType = messageType;
 				this.regexResult = regexResult;
 //				console.debug(key);
+				found=true;
 				break;
 			}
+		}
+		if (!found) {
+			logData("miss", "Unmatched line: "+this.innerHTML);
 		}
 	},
 	evaluate: function () {
