@@ -2913,6 +2913,9 @@ hvStat.battle.eventLog.TurnEvents = function (targetTurnNumber) {
 	}
 	this.turnNumber = targetTurnNumber;
 
+	if (targetTurnNumber !== hvStat.roundContext.lastTurn+1)
+		logData("turn_mismatch", "This is turn "+targetTurnNumber+", but last turn was "+hvStat.roundContext.lastTurn);
+
 	var turnLowerBound;
 	if (hvStat.settings.isFixTurns) {
 		if (hvStat.roundContext.lastTurn > targetTurnNumber) {
