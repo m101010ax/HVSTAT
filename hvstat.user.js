@@ -2891,7 +2891,7 @@ hvStat.battle.eventLog.messageTypeParams = {
 		},
 	},
 	SPIRIT_ENGAGED: {
-		regex: /^Spirit Stance (Engaged|Exhausted)$/,
+		regex: /^Spirit Stance (Engaged|Exhausted|Disabled)$/,
 		relatedMessageTypeNames: null,
 		contentType: "text",
 		evaluationFn: function (message) {
