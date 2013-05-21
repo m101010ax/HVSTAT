@@ -5,7 +5,7 @@
 // @include         http://hentaiverse.org/*
 // @exclude         http://hentaiverse.org/pages/showequip*
 // @author          Various (http://forums.e-hentai.org/index.php?showtopic=79552)
-// @version         5.5.5
+// @version         5.5.5.1
 // @resource        battle-log-type0.css                        css/battle-log-type0.css
 // @resource        battle-log-type1.css                        css/battle-log-type1.css
 // @resource        hvstat.css                                  css/hvstat.css
@@ -331,7 +331,7 @@ var hv = {
 // HV STAT object
 //------------------------------------
 var hvStat = {
-	version: "5.5.5",
+	version: "5.5.5.1",
 	setup: function () {
 		this.addStyle();
 	},
@@ -1511,7 +1511,7 @@ hvStat.support = {
 		hvStat.storage.shrine.save();
 	},
 	confirmBeforeBattle: function () {
-		var elements = document.querySelectorAll('#arenaform img[onclick*="arenaform"]');
+		var elements = document.querySelectorAll('#mainpane img[onclick*="arenaform"]');
 		var i, element;
 		for (i = 0; i < elements.length; i++) {
 			element = elements[i];
@@ -2169,44 +2169,47 @@ hvStat.battle.eventLog.messageTypeParams = {
 		},
 	},
 	MONSTER_HIT: {
-		regex: /^(.+?) (hits|crits) you for (\d+) (.+?) damage\.$/,
-		relatedMessageTypeNames: ["MONSTER_SKILL"],
+		regex: /^((?:.(?!\, and))+?.) (hits|crits) you for (\d+(?:\.\d+)?) (.+?) damage\.$/,
+		relatedMessageTypeNames: null,
 		contentType: "text",
 		evaluationFn: function (message) {
-			var damageSource = message.regexResult[1];
 			var damageAmount = Number(message.regexResult[3]);
-			var damageType = message.regexResult[4];
 			var critical = message.regexResult[2] === "crits";
 			hvStat.roundContext.mAttempts++;
 			hvStat.roundContext.mHits[critical ? 1 : 0]++;
 			hvStat.roundContext.dTaken[critical ? 1 : 0] += damageAmount;
+		},
+	},
+	MONSTER_SKILL_HIT: {
+		regex: /^(.+?) (uses|casts) (.+?)\, and (hits|crits) you for (\d+(?:\.\d+)?) (.+?) damage\.$/,
+		relatedMessageTypeNames: null,
+		contentType: "text",
+		evaluationFn: function (message) {
+			var monsterName = message.regexResult[1];
+			var skillVerb = message.regexResult[2];
+			var skillName = message.regexResult[3];
+			var critical = message.regexResult[4] === "crits";
+			var damageAmount = Number(message.regexResult[5]);
+			var damageType = message.regexResult[6];
 
-			//This check can't be broken into its own property because
-			//properties are checked in unspecified order, and if this property
-			//were checked first it would override the more specific one.
-			var skillRegex=damageSource.match(/^(.+?) (uses|casts) (.+?), and$/);
-			if (skillRegex) {
-				var skillUser = skillRegex[1];
-				var skillVerb = skillRegex[2];
-				var skillName = skillRegex[3];
-				// Skill hit
-				hvStat.roundContext.pskills[1]++;
-				hvStat.roundContext.pskills[2] += damageAmount;
-				if (skillVerb === "uses") {
-					hvStat.roundContext.pskills[0]++;
-					hvStat.roundContext.pskills[3]++;
-					hvStat.roundContext.pskills[4] += damageAmount;
-				} else if (skillVerb === "casts") {
-					hvStat.roundContext.mSpells++;
-					hvStat.roundContext.pskills[5]++;
-					hvStat.roundContext.pskills[6] += damageAmount;
-				}
-				if (hvStat.settings.isRememberSkillsTypes && skillUser.indexOf("Unnamed ") !== 0) {
-					var monster = hvStat.battle.monster.findByName(skillUser);
-					if (monster) {
-//						alert(monster + ":" + skillName  + ":" + skillVerb  + ":" + damageType);
-						monster.storeSkill(skillName, skillVerb, damageType);
-					}
+			hvStat.roundContext.mAttempts++;
+			hvStat.roundContext.mHits[critical ? 1 : 0]++;
+			hvStat.roundContext.dTaken[critical ? 1 : 0] += damageAmount;
+
+			hvStat.roundContext.pskills[1]++;
+			hvStat.roundContext.pskills[2] += damageAmount;
+			if (skillVerb === "uses") {
+				hvStat.roundContext.pskills[3]++;
+				hvStat.roundContext.pskills[4] += damageAmount;
+			} else if (skillVerb === "casts") {
+				hvStat.roundContext.pskills[5]++;
+				hvStat.roundContext.pskills[6] += damageAmount;
+			}
+			if (hvStat.settings.isRememberSkillsTypes && monsterName.indexOf("Unnamed ") !== 0) {
+				var monster = hvStat.battle.monster.findByName(monsterName);
+				if (monster) {
+//					alert(monster + ":" + skillName  + ":" + skillVerb  + ":" + damageType);
+					monster.storeSkill(skillName, skillVerb, damageType);
 				}
 			}
 		},
@@ -2482,7 +2485,7 @@ hvStat.battle.eventLog.messageTypeParams = {
 		},
 	},
 	MAGIC_MISS: {
-		regex: /^Your spell misses its mark\.$/,
+		regex: /^Your spell fails to connect\.$/,
 		relatedMessageTypeNames: ["CAST"],
 		contentType: "text",
 		evaluationFn: function (message) {
@@ -2499,13 +2502,6 @@ hvStat.battle.eventLog.messageTypeParams = {
 				// TODO ?
 			}
 			hvStat.roundContext.sResists++;	// correct?
-		},
-	},
-	SPELL_WEAVING_FAILURE: {
-		regex: /^You fail to weave the spell into the existing effects on the target\.$/,
-		relatedMessageTypeNames: null,
-		contentType: "text",
-		evaluationFn: function (message) {
 		},
 	},
 	DRAIN: {
@@ -2538,13 +2534,13 @@ hvStat.battle.eventLog.messageTypeParams = {
 			}
 		},
 	},
-	LIFESTREAM_DRAIN: {
-		regex: /^Lifestream drains (\d+|\d+\.\d+) points of health from (.+?)\.$/,
+	MONSTER_HEALTH_DRAIN: {
+		regex: /^(.+?) drains (\d+(?:\.\d+)?) points of health from (.+?)\.$/,
 		relatedMessageTypeNames: null,
 		contentType: "text",
 		evaluationFn: function (message) {
-			var drainAmount = Number(message.regexResult[1]);
-			var targetMonsterName = message.regexResult[2];
+			var drainAmount = Number(message.regexResult[2]);
+			var targetMonsterName = message.regexResult[3];
 			var monster = hvStat.battle.monster.findByName(targetMonsterName);
 			if (monster) {
 				monster.takeDamage(drainAmount);
@@ -2643,15 +2639,16 @@ hvStat.battle.eventLog.messageTypeParams = {
 		},
 	},
 	ABSORPTION: {
-		regex: /^The spell is absorbed. You gain (\d+) Magic Points\.$/,
+		regex: /^(.+?) casts (.+?)\, but is absorbed\. You gain (\d+(?:\.\d+)?) Magic Points\.$/,
 		relatedMessageTypeNames: null,
 		contentType: "text",
 		evaluationFn: function (message) {
 			if (hvStat.settings.isWarnAbsorbTrigger) {
 				hvStat.battle.warningSystem.enqueueAlert("Absorbing Ward has triggered.");
 			}
+			hvStat.roundContext.mSpells++;
 			hvStat.roundContext.absArry[1]++;
-			hvStat.roundContext.absArry[2] += Number(message.regexResult[1]);
+			hvStat.roundContext.absArry[2] += Number(message.regexResult[3]);
 		},
 	},
 	SPARK_OF_LIFE_SUCCESS: {
@@ -2697,12 +2694,12 @@ hvStat.battle.eventLog.messageTypeParams = {
 		},
 	},
 	MONSTER_HEAL: {
-		regex: /^(.+?) heals (.+?) for (\d+|\d+\.\d+) points of health\.$/,
+		regex: /^(.+?) casts (.+?)\, healing (.+?) for (\d+(?:\.\d+)?) points of health\.$/,
 		relatedMessageTypeNames: null,
 		contentType: "text",
 		evaluationFn: function (message) {
-			var targetMonsterName = message.regexResult[2];
-			var healingAmount = Number(message.regexResult[3]);
+			var targetMonsterName = message.regexResult[3];
+			var healingAmount = Number(message.regexResult[4]);
 			var monster = hvStat.battle.monster.findByName(targetMonsterName);
 			if (monster) {
 				monster.restoreHealthPoint(healingAmount);
@@ -4242,6 +4239,7 @@ hvStat.battle.monster.Monster.prototype = {
 				if (hv.settings.useHVFontEngine) {
 					nameOuterFrameElement.style.width = "auto"; // Tweak for Firefox
 					nameInnerFrameElement.style.width = "auto"; // Tweak for Firefox
+					nameInnerFrameElement.lastChild.style.clear = "none";
 					div = document.createElement("div");
 					div.className ="hvstat-monster-status-on-hv-font";
 					div.innerHTML = statsHtml;
@@ -7317,7 +7315,6 @@ hvStat.inventory.equipment = {
 		];
 		var elements = document.querySelectorAll('#inv_equip div.eqdp, #item_pane div.eqdp, #equip div.eqdp, #equip_pane div.eqdp');
 		Array.prototype.forEach.call(elements, function (element) {
-			console.debug(element.getAttribute("onmouseover"));
 			var onmouseover = element.getAttribute("onmouseover");
 			var regexResult = onmouseover.match(/(One-handed Weapon|Two-handed Weapon|Staff|Shield|Cloth Armor|Light Armor|Heavy Armor)(?:\s*&nbsp;)*\s*Level/);
 			if (!regexResult) {
