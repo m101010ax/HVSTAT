@@ -558,36 +558,30 @@ hvStat.util = {
 	],
 	displayedItems: [
 		"[Lesser Health Potion]", "[Scroll of Swiftness]",
-		"[Average Health Potion]", "[Scroll of Shielding]",
-		"[Greater Health Potion]", "[Scroll of Warding]",
-		"[Superior Health Potion]", "[Scroll of the Avatar]",
-		"[Heroic Health Potion]", "[Scroll of Absorption]",
-		"[Health Elixir]", "[Scroll of Shadows]",
-		"[Lesser Mana Potion]", "[Scroll of Life]",
-		"[Average Mana Potion]", "[Scroll of the Gods]",
-		"[Greater Mana Potion]", "[Infusion of Flames]",
-		"[Superior Mana Potion]", "[Infusion of Frost]",
-		"[Heroic Mana Potion]", "[Infusion of Lightning]",
-		"[Mana Elixir]", "[Infusion of Storms]",
-		"[Lesser Spirit Potion]", "[Infusion of Divinity]",
-		"[Average Spirit Potion]", "[Infusion of Darkness]",
-		"[Greater Spirit Potion]", "[Infusion of Gaia]",
-		"[Superior Spirit Potion]", "[Soul Stone]",
-		"[Heroic Spirit Potion]", "[Flower Vase]",
-		"[Spirit Elixir]", "[Last Elixir]",
-		"[Token of Blood]", "[Bubble-Gum]",
-		"[Token of Healing]", "[Crystal of Flames]",
-		"[Chaos Token]", "[Crystal of Frost]",
-		"[Crystal of Vigor]", "[Crystal of Lightning]",
-		"[Crystal of Finesse]", "[Crystal of Tempest]",
-		"[Crystal of Swiftness]", "[Crystal of Devotion]",
-		"[Crystal of Fortitude]", "[Crystal of Corruption]",
-		"[Crystal of Cunning]", "[Crystal of Quintessence]",
-		"[Crystal of Knowledge]", " ",
-		"[Voidseeker Shard]", " ",
-		"[Aether Shard]", " ",
-		"[Featherweight Shard]", " ",
-		"[Amnesia Shard]", " "
+		"[Greater Health Potion]", "[Scroll of Protection]",
+		"[Heroic Health Potion]", "[Scroll of the Avatar]",
+		"[Health Elixir]", "[Scroll of Absorption]",
+		"[Lesser Mana Potion]", "[Scroll of Shadows]",
+		"[Greater Mana Potion]", "[Scroll of Life]",
+		"[Heroic Mana Potion]", "[Scroll of the Gods]",
+		"[Mana Elixir]", "[Infusion of Flames]",
+		"[Lesser Spirit Potion]", "[Infusion of Frost]",
+		"[Greater Spirit Potion]", "[Infusion of Lightning]",
+		"[Heroic Spirit Potion]", "[Infusion of Storms]",
+		"[Spirit Elixir]", "[Infusion of Divinity]",
+		"[Last Elixir]", "[Infusion of Darkness]",
+		"[Token of Blood]", "[Flower Vase]",
+		"[Chaos Token]", "[Bubble-Gum]",
+		"[Crystal of Vigor]", "[Crystal of Flames]",
+		"[Crystal of Finesse]", "[Crystal of Frost]",
+		"[Crystal of Swiftness]", "[Crystal of Lightning]",
+		"[Crystal of Fortitude]", "[Crystal of Tempest]",
+		"[Crystal of Cunning]", "[Crystal of Devotion]",
+		"[Crystal of Knowledge]", "[Crystal of Corruption]",
+		"[Voidseeker Shard]", "[Monster Chow]",
+		"[Aether Shard]", "[Monster Edibles]",
+		"[Featherweight Shard]", "[Monster Cuisine]",
+		"[Amnesia Shard]", "[Happy Pills]"
 	],
 	isElementalSpell: function (spell) {
 		return this.elementalSpells.indexOf(spell) >= 0;
@@ -2294,7 +2288,7 @@ hvStat.battle.eventLog.messageTypeParams = {
 		},
 	},
 	MONSTER_EFFECT_EXPLOSION: {
-		regex: /^(.+?) explodes for (\d+) (.+?) damage$/,
+		regex: /^(.+?) explodes for (\d+(?:\.\d+)?) (.+?) damage$/,
 		relatedMessageTypeNames: ["HIT"],
 		contentType: "text",
 		evaluationFn: function (message) {
@@ -2311,7 +2305,7 @@ hvStat.battle.eventLog.messageTypeParams = {
 		},
 	},
 	MELEE_HIT: {
-		regex: /^You (hit|crit) (.+?) for (\d+) (.+?) damage\.$/,
+		regex: /^You (hit|crit) (.+?) for (\d+(?:\.\d+)?) (.+?) damage\.$/,
 		relatedMessageTypeNames: null,
 		contentType: "text",
 		evaluationFn: function (message) {
@@ -2328,7 +2322,7 @@ hvStat.battle.eventLog.messageTypeParams = {
 		},
 	},
 	HIT: {
-		regex: /^(.+?) (hits|crits|blasts) (?!you)(.+?) for (\d+)(?: (.+?))? damage\.$/,
+		regex: /^(.+?) (hits|crits|blasts) (?!you)(.+?) for (\d+(?:\.\d+)?)(?: (.+?))? damage\.$/,
 		relatedMessageTypeNames: null,
 		contentType: "text",
 		evaluationFn: function (message) {
@@ -2374,7 +2368,7 @@ hvStat.battle.eventLog.messageTypeParams = {
 		},
 	},
 	RESTORATION: {
-		regex: /^(.+?) restores (\d+) points of (.+?)\.$/,
+		regex: /^(.+?) restores (\d+(?:\.\d+)?) points of (.+?)\.$/,
 		relatedMessageTypeNames: null,
 		contentType: "text",
 		evaluationFn: function (message) {
@@ -2389,7 +2383,7 @@ hvStat.battle.eventLog.messageTypeParams = {
 		},
 	},
 	COUNTER: {
-		regex: /^You counter (.+?) for (\d+) points of (.+?) damage\.$/,
+		regex: /^You counter (.+?) for (\d+(?:\.\d+)?) points of (.+?) damage\.$/,
 		relatedMessageTypeNames: null,
 		contentType: "text",
 		evaluationFn: function (message) {
@@ -2407,7 +2401,7 @@ hvStat.battle.eventLog.messageTypeParams = {
 		},
 	},
 	SPIRIT_SHIELD_SUCCESS: {
-		regex: /^Your spirit shield absorbs (\d+) points of damage from the attack into (\d+|\d+\.\d+) points of spirit damage\.$/,
+		regex: /^Your spirit shield absorbs (\d+(?:\.\d+)?) points of damage from the attack into (\d+(?:\.\d+)?) points of spirit damage\.$/,
 		relatedMessageTypeNames: null,
 		contentType: "text",
 		evaluationFn: function (message) {
@@ -2535,7 +2529,7 @@ hvStat.battle.eventLog.messageTypeParams = {
 		},
 	},
 	DRAIN: {
-		regex: /^You drain (\d+|\d+\.\d+) (HP|MP|SP) from (.+)$/,
+		regex: /^You drain (\d+(?:\.\d+)?) (HP|MP|SP) from (.+)$/,
 		relatedMessageTypeNames: null,
 		contentType: "text",
 		evaluationFn: function (message) {
@@ -2637,14 +2631,14 @@ hvStat.battle.eventLog.messageTypeParams = {
 		},
 	},
 	RECOVERY: {
-		regex: /^Recovered (\d+) points of (.+)\.$/,
+		regex: /^Recovered (\d+(?:\.\d+)?) points of (.+)\.$/,
 		relatedMessageTypeNames: null,
 		contentType: "text",
 		evaluationFn: function (message) {
 		},
 	},
 	CURE: {
-		regex: /^You are healed for (\d+) Health Points\.$/,
+		regex: /^You are healed for (\d+(?:\.\d+)?) Health Points\.$/,
 		relatedMessageTypeNames: ["CAST"],
 		contentType: "text",
 		evaluationFn: function (message, relatedLog) {
@@ -2745,7 +2739,7 @@ hvStat.battle.eventLog.messageTypeParams = {
 		},
 	},
 	SPAWNING_MONSTER: {
-		regex: /^Spawned Monster ([A-J]): MID=(\d+) \((.+?)\) LV=(\d+) HP=(\d+|\d+\.\d+)$/,
+		regex: /^Spawned Monster ([A-J]): MID=(\d+) \((.+?)\) LV=(\d+) HP=(\d+(?:\.\d+)?)$/,
 		relatedMessageTypeNames: null,
 		contentType: "text",
 		evaluationFn: function (message) {
