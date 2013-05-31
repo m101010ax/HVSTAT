@@ -3064,6 +3064,13 @@ hvStat.battle.eventLog.messageTypeParams = {
 		evaluationFn: function (message) {
 		},
 	},
+	TIME_BONUS: {
+		regex: /^Time Bonus: recovered (\d+) HP and (\d+) MP\.$/,
+		relatedMessageTypeNames: null,
+		contentType: "text",
+		evaluationFn: function (message) {
+		},
+	},
 	SPIRIT_ENGAGED: {
 		regex: /^Spirit Stance (Engaged|Exhausted|Disabled)$/,
 		relatedMessageTypeNames: null,
@@ -3071,8 +3078,29 @@ hvStat.battle.eventLog.messageTypeParams = {
 		evaluationFn: function (message) {
 		},
 	},
+	MASTERY_POINT: {
+		regex: /^You gain one Mastery Point\!$/,
+		relatedMessageTypeNames: null,
+		contentType: "text",
+		evaluationFn: function (message) {
+		},
+	},
 	LEVEL_UP: {
 		regex: /^You have reached Level (\d+)\!$/,
+		relatedMessageTypeNames: null,
+		contentType: "text",
+		evaluationFn: function (message) {
+		},
+	},
+	IW_POTENTIAL: {
+		regex: /^The equipment's potential has increased by (\d+) points\!$/,
+		relatedMessageTypeNames: null,
+		contentType: "text",
+		evaluationFn: function (message) {
+		},
+	},
+	IW_LEVEL_UP: {
+		regex: /^Unlocked innate potential: (.*) Level (\d)$/,
 		relatedMessageTypeNames: null,
 		contentType: "text",
 		evaluationFn: function (message) {
