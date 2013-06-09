@@ -8081,7 +8081,7 @@ hvStat.startup = {
 					showBattleEndStats();
 				}
 				saveStats();
-				if (hv.battle.finished && hvStat.settings.isShowCumEndStats) {
+				if (hv.battle.isFinished && hvStat.settings.isShowCumEndStats) {
 					showFullBattleEndStats();
 				}
 				hvStat.storage.roundContext.remove();
