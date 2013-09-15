@@ -22,6 +22,7 @@
 		<option id="diff4" value="4">Hell</option>
 		<option id="diff5" value="5">Nintendo</option>
 		<option id="diff6" value="6">Battletoads</option>
+		<option id="diff7" value="7">IWBTH</option>
 	</select>
 	</td></tr>
 </table>
@@ -58,7 +59,6 @@
 <tr><td><input type="checkbox" name="isPreventAlts" /></td>		<td>Prevent Alt-# from changing tabs during a battle</td></tr>
 <tr><td><input type="checkbox" name="enableScrollHotkey" /></td>	<td>Enable Page Up/Down key on scrollable panes</td></tr>
 <tr><td><input type="checkbox" name="isDisableForgeHotKeys" /></td>	<td>Disable hotkeys in the Forge (<span style="color: red;">Strongly recommended if using equipment tags</span>)</td></tr>
-<tr><td><input type="checkbox" name="enableShrineKeyPatch" /></td>	<td>Patch to enable Space key in the Shrine (Chrome only)</td></tr>
 </table>
 </div>
 
@@ -202,6 +202,7 @@
 <tr><td><input type="checkbox" name="isWarnSparkTrigger" /></td>	<td>Alert when Spark of Life triggers</td></tr>
 <tr><td><input type="checkbox" name="isWarnSparkExpire" /></td>		<td>Alert when Spark of Life expires</td></tr>
 <tr><td><input type="checkbox" name="alertWhenChannelingIsGained" /></td>	<td>Alert when Channeling is gained</td></tr>
+<tr><td><input type="checkbox" name="alertWhenCooldownExpiredForDrain" /></td>	<td>Alert when cooldown expired for Drain</td></tr>
 </table>
 </div>
 
@@ -259,6 +260,7 @@
 <h3>Monster Display</h3>
 <div>
 <table>
+<tr><td><input type="checkbox" name="doesScaleMonsterGauges" /></td>	<td>Scale gauge lengths based on the highest health points in monsters appeared</td></tr>
 <tr><td><input type="checkbox" name="showMonsterHP" /></td>		<td>Show monster HP (<span style="color: red;">Estimated</span>)</td></tr>
 <tr><td></td><td>
 	<table>
@@ -293,8 +295,8 @@
 			</tr><tr>
 				<td><input type="checkbox" name="hideSpecificDamageType7" /></td><td>Holy</td>
 				<td><input type="checkbox" name="hideSpecificDamageType8" /></td><td>Dark</td>
-				<td><input type="checkbox" name="hideSpecificDamageType9" /></td><td>Soul</td>
 				<td><input type="checkbox" name="hideSpecificDamageType10" /></td><td>Void</td>
+				<td></td>
 			</tr>
 			</table>
 		</td></tr>
