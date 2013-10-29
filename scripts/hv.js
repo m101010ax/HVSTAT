@@ -273,24 +273,21 @@ hv.initialize = function () {
 			},
 		};
 	}
-	var isLocationFound = false,
-		location = "",
+	var location = "",
 		key;
 	if (battle.isActive) {
 		location = "engagingBattle";
 	} else {
-		for (key in this.locationMap) {
-			if (document.location.search.indexOf(this.locationMap[key]) === 0) {
-				location = key;
-				isLocationFound = true;
-				break;
-			}
-		}
-		if (!isLocationFound) {
-			if (util.document.body.querySelector('#riddleform')) {
-				location = "riddle";
-			} else if (util.document.body.querySelector('#pattrform')) {
-				location = "character";
+		if (util.document.body.querySelector('#riddleform')) {
+			location = "riddle";
+		} else if (util.document.body.querySelector('#pattrform')) {
+			location = "character";
+		} else {
+			for (key in this.locationMap) {
+				if (document.location.search.indexOf(this.locationMap[key]) === 0) {
+					location = key;
+					break;
+				}
 			}
 		}
 	}
