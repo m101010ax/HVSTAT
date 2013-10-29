@@ -3392,6 +3392,7 @@ hvStat.battle.eventLog.TurnEvents = function (targetTurnNumber) {
 			var text = util.innerText(messageElement);
 			var innerHTML = messageElement.innerHTML;
 			var message = new hvStat.battle.eventLog.Message(text, innerHTML);
+			logData(turnNumber+"_"+i, innerHTML);
 			this.messages.push(message);
 		}
 	}
@@ -5843,6 +5844,8 @@ hvStat.startup = {
 			document.title = hvStat.settings.customPageTitle;
 		}
 		hvStat.gadget.addStyle();
+
+		logData("location", hv.location);
 
 		if (hv.battle.isActive) {
 			if (hvStat.settings.adjustKeyEventHandling) {
