@@ -698,6 +698,8 @@ function initBattleStatsPane() {
 
 		$('#hvstat-battle-stats-p-accuracy').text(hvStat.stats.aAttempts === 0 ? 0 : (f / hvStat.stats.aAttempts * 100).toFixed(2));
 		$('#hvstat-battle-stats-m-accuracy').text(h === 0 ? 0 : (g / h * 100).toFixed(2));
+		$('#hvstat-battle-stats-evaded-attacks').text(hvStat.stats.aAttempts === 0 ? 0 : (hvStat.stats.mEvades / (hvStat.stats.aAttempts) * 100).toFixed(2));
+		$('#hvstat-battle-stats-parried-attacks').text(hvStat.stats.aAttempts === 0 ? 0 : (hvStat.stats.mParries / (hvStat.stats.aAttempts) * 100).toFixed(2));
 		$('#hvstat-battle-stats-p-crit-chance').text(f === 0 ? 0 : (hvStat.stats.aHits[1] / f * 100).toFixed(2));
 		$('#hvstat-battle-stats-m-crit-chance').text(e === 0 ? 0 : (hvStat.stats.sHits[1] / e * 100).toFixed(2));
 

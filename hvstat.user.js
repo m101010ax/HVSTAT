@@ -674,7 +674,10 @@ hvStat.storage.initialValue = {
 		aAttempts: 0,
 		aHits: [0, 0],
 		aOffhands: [0, 0, 0, 0],
+		mEvades: 0,
+		mParries: 0,
 		sAttempts: 0,
+		mResists: 0,
 		aDomino: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 		aCounters: [0, 0, 0, 0],
 		dDealt: [0, 0, 0],
@@ -747,7 +750,10 @@ hvStat.storage.initialValue = {
 		aAttempts: 0,
 		aHits: [0, 0],
 		aOffhands: [0, 0, 0, 0],
+		mEvades: 0,
+		mParries: 0,
 		sAttempts: 0,
+		mResists: 0,
 		aDomino: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 		aCounters: [0, 0, 0, 0],
 		dDealt: [0, 0, 0],
@@ -807,11 +813,14 @@ hvStat.storage.initialValue = {
 		aOffhands: [0, 0, 0, 0],	// stats
 		aDomino: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],	// stats
 		aCounters: [0, 0, 0, 0],	// stats
+		mEvades: 0,	// stats
+		mParries: 0,	// stats
 		dDealt: [0, 0, 0],	// stats
 		sHits: [0, 0],	// stats
 		sResists: 0,	// stats
 		dDealtSp: [0, 0],	// stats
 		sAttempts: 0,	// stats
+		mResists: 0,	// stats
 		absArry: [0, 0, 0],	// stats
 		mAttempts: 0,	// stats
 		mHits: [0, 0],	// stats
@@ -859,6 +868,8 @@ hvStat.storage.initialValue = {
 		aHits: [0, 0],	// stats
 		aOffhands: [0, 0, 0, 0],	// stats
 		dominoHits: 0,	// stats
+		mEvades: 0,	// stats
+		mParries: 0,	// stats
 		dDealt: [0, 0, 0],	// stats
 		sHits: [0, 0],	// stats
 		sResists: 0,	// stats
@@ -2529,11 +2540,20 @@ hvStat.battle.eventLog.messageTypeParams = {
 		relatedMessageTypeNames: null,
 		contentType: "text",
 		evaluationFn: function (message) {
+			var verb = message.regexResult[2];
 			var method = message.regexResult[3];
 			if (method === "attack") {
-				// TODO
+				hvStat.roundContext.aAttempts++;
+				if (verb === "evades") {
+					hvStat.roundContext.mEvades++;
+				} else if (verb === "parries") {
+					hvStat.roundContext.mParries++;
+				}
 			} else if (method === "spell") {
-				// TODO
+				hvStat.roundContext.sAttempts++;
+				if (verb === "resists") {
+					hvStat.roundContext.mResists++;
+				}
 			}
 		},
 	},
@@ -5465,6 +5485,8 @@ function saveStats() {
 		hvStat.stats.aAttempts += hvStat.roundContext.aAttempts;
 		hvStat.stats.aHits[0] += hvStat.roundContext.aHits[0];
 		hvStat.stats.aHits[1] += hvStat.roundContext.aHits[1];
+		hvStat.stats.mEvades += hvStat.roundContext.mEvades;
+		hvStat.stats.mParries += hvStat.roundContext.mParries;
 		hvStat.stats.aOffhands[0] += hvStat.roundContext.aOffhands[0];
 		hvStat.stats.aOffhands[1] += hvStat.roundContext.aOffhands[1];
 		hvStat.stats.aOffhands[2] += hvStat.roundContext.aOffhands[2];
@@ -5472,6 +5494,7 @@ function saveStats() {
 		hvStat.stats.sAttempts += hvStat.roundContext.sAttempts;
 		hvStat.stats.sHits[0] += hvStat.roundContext.sHits[0];
 		hvStat.stats.sHits[1] += hvStat.roundContext.sHits[1];
+		hvStat.stats.mResists += hvStat.roundContext.mResists;
 		hvStat.stats.mAttempts += hvStat.roundContext.mAttempts;
 		hvStat.stats.mHits[0] += hvStat.roundContext.mHits[0];
 		hvStat.stats.mHits[1] += hvStat.roundContext.mHits[1];
@@ -5575,6 +5598,8 @@ function saveStats() {
 		hvStat.fullBattleInfo.aAttempts += hvStat.roundContext.aAttempts;
 		hvStat.fullBattleInfo.aHits[0] += hvStat.roundContext.aHits[0];
 		hvStat.fullBattleInfo.aHits[1] += hvStat.roundContext.aHits[1];
+		hvStat.fullBattleInfo.mEvades += hvStat.roundContext.mEvades;
+		hvStat.fullBattleInfo.mParries += hvStat.roundContext.mParries;
 		hvStat.fullBattleInfo.aOffhands[0] += hvStat.roundContext.aOffhands[0];
 		hvStat.fullBattleInfo.aOffhands[1] += hvStat.roundContext.aOffhands[1];
 		hvStat.fullBattleInfo.aOffhands[2] += hvStat.roundContext.aOffhands[2];
@@ -5645,6 +5670,8 @@ function getBattleEndStatsHtml() {
 	var b = hvStat.roundContext.mHits[0] + hvStat.roundContext.mHits[1];
 	var ab = hvStat.roundContext.aOffhands[0] + hvStat.roundContext.aOffhands[2];
 	var a = "<b>Accuracy</b>: " + formatProbability(d, hvStat.roundContext.aAttempts, 2) + ", "
+		+ "<b>Evaded</b>: " + formatProbability(hvStat.fullBattleInfo.mEvades, hvStat.fullBattleInfo.aAttempts, 2) + ", "
+		+ "<b>Parried</b>: " + formatProbability(hvStat.fullBattleInfo.mParries, hvStat.fullBattleInfo.aAttempts, 2) + ", "
 		+ "<b>Crits</b>: " + formatProbability(hvStat.roundContext.aHits[1], d, 2) + ", "
 		+ "<b>Offhand</b>: " + formatProbability(ab, d, 2) + ", "
 		+ "<b>Domino</b>: " + formatProbability(hvStat.roundContext.aDomino[0], d, 2) + ", "
@@ -5741,6 +5768,8 @@ function getFullBattleEndStatsHtml() {
 	var ab = hvStat.fullBattleInfo.aOffhands[0] + hvStat.fullBattleInfo.aOffhands[2];
 	var stats = [
 		[["Accuracy", formatProbability(d, hvStat.fullBattleInfo.aAttempts, 2)],
+		["Evaded", formatProbability(hvStat.fullBattleInfo.mEvades, hvStat.fullBattleInfo.aAttempts, 2)],
+		["Parried", formatProbability(hvStat.fullBattleInfo.mParries, hvStat.fullBattleInfo.aAttempts, 2)],
 		["Crits", formatProbability(hvStat.fullBattleInfo.aHits[1], d, 2)],
 		["Offhand", formatProbability(ab, d, 2)],
 		["Domino", formatProbability(hvStat.fullBattleInfo.dominoHits, d, 2)],
